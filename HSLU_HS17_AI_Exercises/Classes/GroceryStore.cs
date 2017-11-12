@@ -1,8 +1,8 @@
-﻿using AI_HS2017_Exercises.Exercises;
+﻿using HSLU_HS17_AI_Exercises.Interfaces;
 using Google.OrTools.ConstraintSolver;
 using System;
 
-namespace AI_HS2017_Exercises.Classes
+namespace HSLU_HS17_AI_Exercises.Classes
 {
     class GroceryStore: IExercises
     {

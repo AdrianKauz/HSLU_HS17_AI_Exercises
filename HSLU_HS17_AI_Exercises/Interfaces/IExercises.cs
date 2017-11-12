@@ -1,4 +1,4 @@
-﻿namespace AI_HS2017_Exercises.Exercises
+﻿namespace HSLU_HS17_AI_Exercises.Interfaces
 {
     interface IExercises
     {

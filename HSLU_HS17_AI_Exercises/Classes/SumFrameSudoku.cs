@@ -6,40 +6,21 @@ using System.Linq;
 
 namespace HSLU_HS17_AI_Exercises.Classes
 {
-    class Sudoku: IExercises
+    class SumFrameSudoku:IExercises
     {
+        // Numbers of the outside frame of the Sum Frame Sudoku
+        // Values are read from left to right or from top to bottom
+        private readonly int[] topFrame = { 15, 18, 12, 11, 21, 13, 15, 17, 13 };
+        private readonly int[] bottomFrame = { 15, 9, 21, 10, 16, 19, 13, 15, 17 };
+        private readonly int[] leftFrame = { 8, 15, 22, 11, 13, 21, 18, 19, 8 };
+        private readonly int[] rightFrame = { 22, 8, 15, 22, 12, 11, 15, 13, 17 };
 
-
-        public void doWork()
+        public void doWork ()
         {
-            Solver solver = new Solver("Sudoku");
+            Solver solver = new Solver("SumFrameSudoku");
 
             // 9x9 Matrix of Decision Variables in {1..9}:
             IntVar[,] board = solver.MakeIntVarMatrix(9, 9, 1, 9);
-
-            // 9*9 Sudoku to resolve:
-            int[,] sudoku = new int[,] {
-                {0, 0, 3,   0, 7, 8,   0, 6, 2},
-                {8, 0, 0,   0, 6, 1,   5, 0, 7},
-                {0, 0, 0,   4, 0, 0,   0, 0, 8},
-
-                {0, 0, 5,   0, 0, 0,   8, 0, 0},
-                {3, 9, 7,   8, 0, 5,   1, 4, 6},
-                {0, 0, 6,   0, 0, 0,   7, 0, 0},
-
-                {9, 0, 0,   0, 0, 4,   0, 0, 0},
-                {6, 0, 1,   2, 8, 0,   0, 0, 4},
-                {5, 7, 0,   6, 1, 0,   2, 0, 0},
-            };
-
-            // Feed solver with the predefined Sudoku...
-            for (int row = 0; row < 9; row++) {
-                for (int column = 0; column < 9; column++) {
-                    if (sudoku[row, column] != 0) {
-                        solver.Add(board[row, column] == (sudoku[row, column]));
-                    }
-                }
-            }
 
             // Handy C# LINQ type for sequences:
             IEnumerable<int> RANGE = Enumerable.Range(0, 9);
@@ -63,6 +44,17 @@ namespace HSLU_HS17_AI_Exercises.Classes
                 }
             }
 
+            // Feed solver with the outside frame numbers
+            for (int x = 0; x < 9; x++) {
+                // Row
+                solver.Add(board[x, 0] + board[x, 1] + board[x, 2] == this.leftFrame[x]);
+                solver.Add(board[x, 6] + board[x, 7] + board[x, 8] == this.rightFrame[x]);
+
+                // Column
+                solver.Add(board[0, x] + board[1, x] + board[2, x] == this.topFrame[x]);
+                solver.Add(board[6, x] + board[7, x] + board[8, x] == this.bottomFrame[x]);
+            }
+
             DecisionBuilder db = solver.MakePhase(
                 board.Flatten(),
                 Solver.INT_VAR_SIMPLE,
@@ -77,17 +69,11 @@ namespace HSLU_HS17_AI_Exercises.Classes
             }
 
             solver.EndSearch();
-
-            // Display solver information:
-            Console.WriteLine("  Time:\t\t" + solver.WallTime());        // "The WallTime() in ms since the creation of the solver."
-            Console.WriteLine("  Solutions:\t" + solver.Solutions());    // "The number of solutions found since the start of the search."
-            Console.WriteLine("  Failures:\t" + solver.Failures());      // "The number of failures encountered since the creation of the solver."
-            Console.WriteLine("  Branches:\t" + solver.Branches());      // "The number of branches explored since the creation of the solver."
         }
 
-        private void PrintSodoku(IntVar[,] currentSolution, int counter)
+        private void PrintSodoku (IntVar[,] currentSolution, int counter)
         {
-            Console.WriteLine("Solution " + counter + ":");
+            Console.WriteLine("Solution " + counter + ":\n");
 
             // Top Line
             Console.WriteLine("  ╔═══════════╦═══════════╦═══════════╗");
@@ -100,15 +86,17 @@ namespace HSLU_HS17_AI_Exercises.Classes
 
                     if ((column + 1) % 3 == 0) {
                         Console.Write(" ║ ");
-                    } else {
+                    }
+                    else {
                         Console.Write(" │ ");
                     }
                 }
 
                 if ((row == 2) || (row == 5)) {
                     Console.WriteLine("\n  ╠═══════════╬═══════════╬═══════════╣");
-                } else {
-                    if(row != 8) {
+                }
+                else {
+                    if (row != 8) {
                         Console.WriteLine("\n  ║───┼───┼───║───┼───┼───║───┼───┼───║");
                     }
                 }

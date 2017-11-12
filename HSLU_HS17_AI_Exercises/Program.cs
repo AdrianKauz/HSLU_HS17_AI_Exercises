@@ -1,5 +1,5 @@
-﻿using AI_HS2017_Exercises.Exercises;
-using AI_HS2017_Exercises.Classes;
+﻿using HSLU_HS17_AI_Exercises.Interfaces;
+using HSLU_HS17_AI_Exercises.Classes;
 using System;
 using System.Collections.Generic;
 
@@ -14,9 +14,11 @@ namespace AI_HS2017_Exercises
             exercises.Add("Grocery Store", new GroceryStore());
             exercises.Add("Cryptogram Puzzle", new CryptogramPuzzle());
             exercises.Add("Sudoku", new Sudoku());
+            exercises.Add("Sum Frame Sudoku", new SumFrameSudoku());
 
-            exercises["Sudoku"].doWork();
-            
+            exercises["Sum Frame Sudoku"].doWork();
+
+            Console.WriteLine("\nPress Enter to continue...");
             Console.ReadLine();
         }
     }
