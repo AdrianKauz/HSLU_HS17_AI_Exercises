@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="Classes\CryptogramPuzzle.cs" />
     <Compile Include="Classes\GroceryStore.cs" />
+    <Compile Include="Classes\MagicSquares.cs" />
     <Compile Include="Classes\Sudoku.cs" />
     <Compile Include="Classes\SumFrameSudoku.cs" />
     <Compile Include="Interfaces\IExercises.cs" />
@@ -78,7 +79,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
