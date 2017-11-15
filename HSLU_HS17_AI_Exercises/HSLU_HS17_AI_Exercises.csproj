@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Binoxxo.cs" />
     <Compile Include="Classes\CryptogramPuzzle.cs" />
     <Compile Include="Classes\GroceryStore.cs" />
     <Compile Include="Classes\MagicSquares.cs" />

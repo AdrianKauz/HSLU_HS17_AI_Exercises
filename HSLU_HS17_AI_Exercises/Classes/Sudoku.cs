@@ -8,8 +8,6 @@ namespace HSLU_HS17_AI_Exercises.Classes
 {
     class Sudoku: IExercises
     {
-
-
         public void doWork()
         {
             Solver solver = new Solver("Sudoku");
