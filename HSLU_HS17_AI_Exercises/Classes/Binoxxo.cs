@@ -10,7 +10,7 @@ namespace HSLU_HS17_AI_Exercises.Classes
 {
     class Binoxxo:IExercises
     {
-        private readonly int size = 4;
+        private readonly int size = 10;
 
         public void doWork()
         {
@@ -23,28 +23,81 @@ namespace HSLU_HS17_AI_Exercises.Classes
                 // Handy C# LINQ type for sequences:
                 IEnumerable<int> RANGE = Enumerable.Range(0, this.size);
 
-                // Set all rows and columns Different
+                // Each row and each column should have an equal amount of X and O's:
                 foreach (int i in RANGE) {
-                    // Rows
-                    IntVar[] currentRow = (from j in RANGE select board[i, j]).ToArray();
+                    // Row
+                    solver.Add((from j in RANGE select board[i, j]).ToArray().Sum() == (this.size / 2));
 
-                    int asdad = currentRow.Where(x => x.Value().Equals(0));
+                    // Column
+                    solver.Add((from j in RANGE select board[j, i]).ToArray().Sum() == (this.size / 2));
+                }
 
-                    solver.Add(currentRow.Where(x => x is 0))
+                // Each row and column should be different: (Yes! Shit is working....)
+                foreach (int i in RANGE) {
+                    for (int x = i + 1; x < this.size; x++) {
+                        // Rows:
+                        solver.Add(
+                        (from j in RANGE select board[i, j] * (int)Math.Pow(2, j)).ToArray().Sum() !=
+                        (from j in RANGE select board[x, j] * (int)Math.Pow(2, j)).ToArray().Sum()
+                        );
+                        // Columns:
+                        solver.Add(
+                            (from j in RANGE select board[j, i] * (int)Math.Pow(2, j)).ToArray().Sum() !=
+                            (from j in RANGE select board[j, x] * (int)Math.Pow(2, j)).ToArray().Sum()
+                            );
+                    };
+                }
 
-                    solver.Add((from j in RANGE select board[i, j]).ToArray().Count() == (from j in RANGE select board[i, j]).ToArray().Count());
 
+                // Each row and each column should have the equal amount of x and 0
 
-                    for (int x = i; x < this.size; x++) {
-                        // Rows
-                        (from j in RANGE select board[i, j]).ToArray().Count();
+                DecisionBuilder db = solver.MakePhase(
+                board.Flatten(),
+                Solver.INT_VAR_SIMPLE,
+                Solver.INT_VALUE_SIMPLE);
+
+                solver.NewSearch(db);
+
+                // Calculate first result for this solution
+                // If more solutions are necessary, you can extend this part with a while(...)-Loop
+                if (solver.NextSolution()) {
+                    printSquare(board);
+
+                    
+
+                    foreach (int i in RANGE) {
+
+                        Console.WriteLine((from j in RANGE select board[i, j].Value() * (int)Math.Pow(2, j)).ToArray().Sum());
+                        //Console.Write((from j in RANGE select board[i, j].Value()).ToArray());
                     }
 
 
+
+
+                }
+
+                solver.EndSearch();
+
+                if (solver.Solutions() == 0) {
+                    Console.WriteLine("No possible solution was found for the given Binoxxo! :-(");
                 }
             } else {
                 Console.WriteLine("Given size of {0} not allowed! Must be multible of 2!", this.size);
             }
+        }
+
+        private void printSquare(IntVar[,] currentSolution)
+        {
+            Console.WriteLine("Possible solution:\n");
+
+            for (int row = 0; row < this.size; row++) {
+                for (int column = 0; column < this.size; column++) {
+                    Console.Write("  {0,2}", currentSolution[row, column].Value());
+                }
+                Console.Write("\n");
+            }
+
+            Console.WriteLine();
         }
     }
 }
