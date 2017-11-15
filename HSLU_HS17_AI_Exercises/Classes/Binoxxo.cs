@@ -3,18 +3,16 @@ using HSLU_HS17_AI_Exercises.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HSLU_HS17_AI_Exercises.Classes
 {
     class Binoxxo:IExercises
     {
-        private readonly int size = 10;
+        private readonly int size = 14;
 
         public void doWork()
         {
-            if (this.size % 2 == 0) {
+            if (this.size % 2 == 0 && this.size > 3) {
                 Solver solver = new Solver("Binoxxo");
 
                 // n x n Matrix
@@ -40,6 +38,7 @@ namespace HSLU_HS17_AI_Exercises.Classes
                         (from j in RANGE select board[i, j] * (int)Math.Pow(2, j)).ToArray().Sum() !=
                         (from j in RANGE select board[x, j] * (int)Math.Pow(2, j)).ToArray().Sum()
                         );
+
                         // Columns:
                         solver.Add(
                             (from j in RANGE select board[j, i] * (int)Math.Pow(2, j)).ToArray().Sum() !=
@@ -48,8 +47,20 @@ namespace HSLU_HS17_AI_Exercises.Classes
                     };
                 }
 
+                // Max two cells next to each other should have the same value (This shit is working too!)
+                IEnumerable<int> GROUP_START = Enumerable.Range(0, this.size - 2);
+                IEnumerable<int> GROUP = Enumerable.Range(0, 3);
+                foreach (int x in RANGE) {
+                    foreach (int y in GROUP_START) {
+                        // Rows:
+                        solver.Add((from j in GROUP select board[x, y + j]).ToArray().Sum() > 0);
+                        solver.Add((from j in GROUP select board[x, y + j]).ToArray().Sum() < 3);
 
-                // Each row and each column should have the equal amount of x and 0
+                        // Columns:
+                        solver.Add((from j in GROUP select board[y + j, x]).ToArray().Sum() > 0);
+                        solver.Add((from j in GROUP select board[y + j, x]).ToArray().Sum() < 3);
+                    }
+                }
 
                 DecisionBuilder db = solver.MakePhase(
                 board.Flatten(),
@@ -62,18 +73,6 @@ namespace HSLU_HS17_AI_Exercises.Classes
                 // If more solutions are necessary, you can extend this part with a while(...)-Loop
                 if (solver.NextSolution()) {
                     printSquare(board);
-
-                    
-
-                    foreach (int i in RANGE) {
-
-                        Console.WriteLine((from j in RANGE select board[i, j].Value() * (int)Math.Pow(2, j)).ToArray().Sum());
-                        //Console.Write((from j in RANGE select board[i, j].Value()).ToArray());
-                    }
-
-
-
-
                 }
 
                 solver.EndSearch();
@@ -82,7 +81,7 @@ namespace HSLU_HS17_AI_Exercises.Classes
                     Console.WriteLine("No possible solution was found for the given Binoxxo! :-(");
                 }
             } else {
-                Console.WriteLine("Given size of {0} not allowed! Must be multible of 2!", this.size);
+                Console.WriteLine("Given size of {0} not allowed! Must be multiple of 2!", this.size);
             }
         }
 
@@ -92,7 +91,7 @@ namespace HSLU_HS17_AI_Exercises.Classes
 
             for (int row = 0; row < this.size; row++) {
                 for (int column = 0; column < this.size; column++) {
-                    Console.Write("  {0,2}", currentSolution[row, column].Value());
+                    Console.Write(" {0}", (currentSolution[row, column].Value() == 0 ? '0' : 'X'));
                 }
                 Console.Write("\n");
             }
