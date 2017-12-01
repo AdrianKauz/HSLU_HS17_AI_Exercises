@@ -9,8 +9,9 @@ namespace HSLU_HS17_AI_Exercises.Classes
     class XmasPuzzle: IExercises
     {
         private readonly int size = 8;
-        private readonly int X = -1; // Marks a paket
+        private readonly int X = -1; // X defines a possible place for a lost xmas-gift
         private readonly int[,] initialField;
+        private readonly int maxGifts = 16;
 
         public XmasPuzzle()
         {
@@ -31,37 +32,39 @@ namespace HSLU_HS17_AI_Exercises.Classes
         {
             Solver solver = new Solver("Binoxxo");
 
-            // n x n Matrix
-            //IntVar[,] board = solver.MakeIntVarMatrix(this.size, this.size, -1, 8);
+            // n x m Matrix
             IntVar[,] board = new IntVar[this.size, this.size];
 
             // Feed IntVar-matrix and feed solver with the predefined Field value...
             for (int row = 0; row < this.size; row++) {
                 for (int column = 0; column < this.size; column++) {
-                    if (initialField[row, column] == X) {
-                        board[row, column] = solver.MakeIntVar(X, 0);
+                    if (this.initialField[row, column] == X) {
+                        board[row, column] = solver.MakeIntVar(X, 0);  // Range of -1 to 0
                     } else {
                         board[row, column] = solver.MakeIntVar(0, 8);
                         
-                        // board[row, column] must have the value of field[row, column]
-                        solver.Add(board[row, column] == (initialField[row, column]));
+                        // board[row, column] MUST have the value of field[row, column]
+                        solver.Add(board[row, column] == this.initialField[row, column]);
                     }
                 }
             }
 
             // Search field-matrix for hints about the lost gifts and group the neighbours.
             // Sum of neighbours with "-1"-Value should be the same value like the inverted hint-value.
+            // As an example: If hint is "4" then there should be four times a value of "-1" around the hint.
             // This should be enought to solve this puzzle.
 
             // Handy C# LINQ type for sequences:
             IEnumerable<int> RANGE = Enumerable.Range(0, 8);
-            IEnumerable<int> FULL_CELL = Enumerable.Range(0, 3);
-            IEnumerable<int> SMALL_CELL = Enumerable.Range(0, 2);
+            IEnumerable<int> ROW_LENGTH;
+            IEnumerable<int> COLUMN_LENGTH;
+            int rowOffset;
+            int columnOffset;
 
             // Maximum of lost gifts
-            solver.Add((from di in RANGE from dj in RANGE where this.initialField[di, dj] == -1 select board[di, dj]).ToArray().Sum() == -16);
+            solver.Add((from di in RANGE from dj in RANGE where this.initialField[di, dj] == -1 select board[di, dj]).ToArray().Sum() == -this.maxGifts);
 
-            // Outer loop searches for hints
+            // Outer and inner loop searches for hints
             for (int row = 0; row < this.size; row++) {
                 for (int column = 0; column < this.size; column++) {
                     // If a hint was found, then group all neighbours with a value of "-1"
@@ -70,68 +73,68 @@ namespace HSLU_HS17_AI_Exercises.Classes
                         // Now it's getting ugly...
                         if(row == 0) {
                             if(column == 0) {
-                                foreach (int i in SMALL_CELL) {
-                                    foreach (int j in SMALL_CELL) {
-                                        solver.Add((from di in SMALL_CELL from dj in SMALL_CELL where this.initialField[row + di, column + dj] == -1 select board[row + di, column + dj]).ToArray().Sum() == -this.initialField[row, column]);
-                                    }
-                                }
-                            } else if (column == this.size - 1) {
-                                foreach (int i in SMALL_CELL) {
-                                    foreach (int j in SMALL_CELL) {
-                                        solver.Add((from di in SMALL_CELL from dj in SMALL_CELL where this.initialField[row  + di, column - 1 + dj] == -1 select board[row + di, column - 1 + dj]).ToArray().Sum() == -this.initialField[row, column]);
-                                    }
-                                }
-                            }
-                            else {
-                                foreach (int i in SMALL_CELL) {
-                                    foreach (int j in FULL_CELL) {
-                                        solver.Add((from di in SMALL_CELL from dj in FULL_CELL where this.initialField[row + di, column - 1 + dj] == -1 select board[row + di, column - 1 + dj]).ToArray().Sum() == -this.initialField[row, column]);
-                                    }
-                                }
-                            }
-                        } else if (row == this.size - 1) {
-                            if (column == 0) {
-                                foreach (int i in SMALL_CELL) {
-                                    foreach (int j in SMALL_CELL) {
-                                        solver.Add((from di in SMALL_CELL from dj in SMALL_CELL where this.initialField[row - 1 + di, column + dj] == -1 select board[row - 1 + di, column + dj]).ToArray().Sum() == -this.initialField[row, column]);
-                                    }
-                                }
+                                ROW_LENGTH = Enumerable.Range(0, 2);
+                                COLUMN_LENGTH = Enumerable.Range(0, 2);
+                                rowOffset = 0;
+                                columnOffset = 0;
                             }
                             else if (column == this.size - 1) {
-                                foreach (int i in SMALL_CELL) {
-                                    foreach (int j in SMALL_CELL) {
-                                        solver.Add((from di in SMALL_CELL from dj in SMALL_CELL where this.initialField[row - 1 + di, column - 1 + dj] == -1 select board[row - 1 + di, column - 1 + dj]).ToArray().Sum() == -this.initialField[row, column]);
-                                    }
-                                }
+                                ROW_LENGTH = Enumerable.Range(0, 2);
+                                COLUMN_LENGTH = Enumerable.Range(0, 2);
+                                rowOffset = 0;
+                                columnOffset = -1;
                             }
                             else {
-                                foreach (int i in SMALL_CELL) {
-                                    foreach (int j in FULL_CELL) {
-                                        solver.Add((from di in SMALL_CELL from dj in FULL_CELL where this.initialField[row - 1 + di, column - 1 + dj] == -1 select board[row - 1 + di, column - 1 + dj]).ToArray().Sum() == -this.initialField[row, column]);
-                                    }
-                                }
+                                ROW_LENGTH = Enumerable.Range(0, 2);
+                                COLUMN_LENGTH = Enumerable.Range(0, 3);
+                                rowOffset = 0;
+                                columnOffset = -1;
                             }
-                        } else {
+                        }
+                        else if (row == this.size - 1) {
                             if (column == 0) {
-                                foreach (int i in FULL_CELL) {
-                                    foreach (int j in SMALL_CELL) {
-                                        solver.Add((from di in FULL_CELL from dj in SMALL_CELL where this.initialField[row - 1 + di, column + dj] == -1 select board[row - 1 + di, column + dj]).ToArray().Sum() == -this.initialField[row, column]);
-                                    }
-                                }
+                                ROW_LENGTH = Enumerable.Range(0, 2);
+                                COLUMN_LENGTH = Enumerable.Range(0, 2);
+                                rowOffset = -1;
+                                columnOffset = 0;
                             }
                             else if (column == this.size - 1) {
-                                foreach (int i in FULL_CELL) {
-                                    foreach (int j in SMALL_CELL) {
-                                        solver.Add((from di in FULL_CELL from dj in SMALL_CELL where this.initialField[row - 1 + di, column - 1 + dj] == -1 select board[row - 1 + di, column - 1 + dj]).ToArray().Sum() == -this.initialField[row, column]);
-                                    }
-                                }
+                                ROW_LENGTH = Enumerable.Range(0, 2);
+                                COLUMN_LENGTH = Enumerable.Range(0, 2);
+                                rowOffset = -1;
+                                columnOffset = -1;
                             }
                             else {
-                                foreach (int i in FULL_CELL) {
-                                    foreach (int j in FULL_CELL) {
-                                        solver.Add((from di in FULL_CELL from dj in FULL_CELL where this.initialField[row - 1 + di, column - 1 + dj] == -1 select board[row - 1 + di, column - 1 + dj]).ToArray().Sum() == -this.initialField[row, column]);
-                                    }
-                                }
+                                ROW_LENGTH = Enumerable.Range(0, 2);
+                                COLUMN_LENGTH = Enumerable.Range(0, 3);
+                                rowOffset = -1;
+                                columnOffset = -1;
+                            }
+                        }
+                        else {
+                            if (column == 0) {
+                                ROW_LENGTH = Enumerable.Range(0, 3);
+                                COLUMN_LENGTH = Enumerable.Range(0, 2);
+                                rowOffset = -1;
+                                columnOffset = 0;
+                            }
+                            else if (column == this.size - 1) {
+                                ROW_LENGTH = Enumerable.Range(0, 3);
+                                COLUMN_LENGTH = Enumerable.Range(0, 2);
+                                rowOffset = -1;
+                                columnOffset = -1;
+                            }
+                            else {
+                                ROW_LENGTH = Enumerable.Range(0, 3);
+                                COLUMN_LENGTH = Enumerable.Range(0, 3);
+                                rowOffset = -1;
+                                columnOffset = -1;
+                            }
+                        }
+
+                        foreach (int i in ROW_LENGTH) {
+                            foreach (int j in COLUMN_LENGTH) {
+                                solver.Add((from di in ROW_LENGTH from dj in COLUMN_LENGTH where this.initialField[row + rowOffset + di, column + columnOffset + dj] == -1 select board[row + rowOffset + di, column + columnOffset + dj]).ToArray().Sum() == -this.initialField[row, column]);
                             }
                         }
                     }
