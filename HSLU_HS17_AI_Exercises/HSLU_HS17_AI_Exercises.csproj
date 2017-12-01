@@ -74,6 +74,7 @@
     <Compile Include="Classes\MagicSquares.cs" />
     <Compile Include="Classes\Sudoku.cs" />
     <Compile Include="Classes\SumFrameSudoku.cs" />
+    <Compile Include="Classes\XmasPuzzle.cs" />
     <Compile Include="Interfaces\IExercises.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -17,8 +17,10 @@ namespace AI_HS2017_Exercises
             exercises.Add("Sum Frame Sudoku", new SumFrameSudoku());
             exercises.Add("Magic Squares", new MagicSquares());
             exercises.Add("Binoxxo", new Binoxxo());
+            exercises.Add("XmasPuzzle", new XmasPuzzle());
+            
 
-            exercises["Binoxxo"].doWork();
+            exercises["XmasPuzzle"].doWork();
 
             Console.WriteLine("\nPress Enter to continue...");
             Console.ReadLine();

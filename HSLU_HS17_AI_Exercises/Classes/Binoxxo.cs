@@ -35,9 +35,9 @@ namespace HSLU_HS17_AI_Exercises.Classes
                     for (int x = i + 1; x < this.size; x++) {
                         // Rows:
                         solver.Add(
-                        (from j in RANGE select board[i, j] * (int)Math.Pow(2, j)).ToArray().Sum() !=
-                        (from j in RANGE select board[x, j] * (int)Math.Pow(2, j)).ToArray().Sum()
-                        );
+                            (from j in RANGE select board[i, j] * (int)Math.Pow(2, j)).ToArray().Sum() !=
+                            (from j in RANGE select board[x, j] * (int)Math.Pow(2, j)).ToArray().Sum()
+                            );
 
                         // Columns:
                         solver.Add(
