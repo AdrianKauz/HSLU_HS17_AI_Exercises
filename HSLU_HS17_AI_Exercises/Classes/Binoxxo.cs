@@ -1,8 +1,16 @@
-﻿using Google.OrTools.ConstraintSolver;
-using HSLU_HS17_AI_Exercises.Interfaces;
+﻿using HSLU_HS17_AI_Exercises.Interfaces;
+using Google.OrTools.ConstraintSolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+/*
+ * Module:  "HSLU - Artificial Intelligence"
+ * Lecture: "Introduction to Artificial Intelligence"
+ * Chapter: "Constraint Programming 1 – Modelling with OR-Tools"
+ * Task:    "Binoxxo-Solver with Google OR-Tools"
+ * Author:  "Adrian Kauz"
+ */
 
 namespace HSLU_HS17_AI_Exercises.Classes
 {

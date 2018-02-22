@@ -4,6 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+/*
+ * Module:  "HSLU - Artificial Intelligence"
+ * Lecture: "Introduction to Artificial Intelligence"
+ * Chapter: "Constraint Programming 1 – Modelling with OR-Tools"
+ * Task:    "MagicSquares-Solver with Google OR-Tools"
+ * Author:  "Adrian Kauz"
+ */
+
 namespace HSLU_HS17_AI_Exercises.Classes
 {
     class MagicSquares:IExercises

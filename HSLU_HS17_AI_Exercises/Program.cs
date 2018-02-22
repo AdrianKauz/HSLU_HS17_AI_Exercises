@@ -3,6 +3,13 @@ using HSLU_HS17_AI_Exercises.Classes;
 using System;
 using System.Collections.Generic;
 
+/*
+ * Module:  "HSLU - Artificial Intelligence"
+ * Lecture: "Introduction to Artificial Intelligence"
+ * Chapter: "Constraint Programming 1 – Modelling with OR-Tools"
+ * Author:  "Adrian Kauz"
+ */
+
 namespace AI_HS2017_Exercises
 {
     class Program

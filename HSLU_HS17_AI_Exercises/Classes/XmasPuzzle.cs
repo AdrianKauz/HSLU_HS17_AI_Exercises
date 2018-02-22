@@ -1,8 +1,16 @@
-﻿using Google.OrTools.ConstraintSolver;
-using HSLU_HS17_AI_Exercises.Interfaces;
+﻿using HSLU_HS17_AI_Exercises.Interfaces;
+using Google.OrTools.ConstraintSolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+/*
+ * Module:  "HSLU - Artificial Intelligence"
+ * Lecture: "Introduction to Artificial Intelligence"
+ * Chapter: "Constraint Programming 1 – Modelling with OR-Tools"
+ * Task:    "XmasPuzzle-Solver with Google OR-Tools"
+ * Author:  "Adrian Kauz"
+ */
 
 namespace HSLU_HS17_AI_Exercises.Classes
 {
@@ -30,7 +38,7 @@ namespace HSLU_HS17_AI_Exercises.Classes
 
         public void doWork()
         {
-            Solver solver = new Solver("Binoxxo");
+            Solver solver = new Solver("Xmas Puzzle");
 
             // n x m Matrix
             IntVar[,] board = new IntVar[this.size, this.size];

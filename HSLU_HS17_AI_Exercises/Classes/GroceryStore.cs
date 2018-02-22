@@ -2,6 +2,14 @@
 using Google.OrTools.ConstraintSolver;
 using System;
 
+/*
+ * Module:  "HSLU - Artificial Intelligence"
+ * Lecture: "Introduction to Artificial Intelligence"
+ * Chapter: "Constraint Programming 1 – Modelling with OR-Tools"
+ * Task:    "GroceryStore-Solver with Google OR-Tools"
+ * Author:  "Adrian Kauz", with code-examples by Prof. Dr. Marc Pouly
+ */
+
 namespace HSLU_HS17_AI_Exercises.Classes
 {
     class GroceryStore: IExercises
